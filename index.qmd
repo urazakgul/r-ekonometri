@@ -1,0 +1,15 @@
+# Önsöz {.unnumbered}
+
+**R ile Uygulamalı Ekonometri** isimli kitabım ile üniversite öğrencilerinden sektörde çalışan profesyonellere kadar geniş bir kitleye ulaşmayı hedefliyorum.
+
+**Kitabın konu başlıkları ile içeriğini zamanla kendini tamamlayacak ve gerekirse güncelleyecek şekilde tasarladım. Süreç ile ilgili bilgiler bir sonraki sayfada verilecektir.**
+
+Kitabın hazırlanması aşamasında ana kaynağım *Damodar Gujarati*'nin **Örneklerle Ekonometri (Econometrics by Example)** kitabı olacaktır. Bu kitabın yanında faydalandığım diğer birçok kaynağa *Yararlandığım Kaynaklar* bölümünden ulaşabilirsiniz.
+
+R programlama dilini indirdikten sonra uzun bir süre kullanıp deneyim kazandığım **RStudio** veya geçiş yaptığım **Visual Studio Code** IDE'si ile ilerlemenizi ve bu dil ve tercih ettiğiniz IDE hakkında kendinizi yeterli hissedecek kadar bilgi sahibi olmanızı tavsiye ederim. Kitapta R programlama dili hakkında herhangi bir konu anlatımı olmayacaktır.
+
+Ekonometri konularını akademik bir anlatımdan tam değil fakat olabildiğince uzak tutmaya çalışacağım ancak bu ezbere dayalı bir yol ile öğreneceğiniz anlamına gelmeyecektir. Her konu hakkında temel bir bilginiz olacak ve mutlaka en az bir uygulama yapmış olacaksınız.
+
+Öğrenmek dinamik bir süreçtir. Bu kitap temel bilgileri verecek olmak ile beraber kendini tamamlama aşamasında ilke edindiği aşağıdaki söz ile ilerleyecektir.
+
+> *İlim ve fennin yaşadığımız her dakikadaki safhalarının gelişmesini kavramak ve izlemek şarttır.* -Mustafa Kemal ATATÜRK

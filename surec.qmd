@@ -1,0 +1,5 @@
+# Süreç {.unnumbered}
+
+06/12/2022:
+
+* Projenin ilk paylaşımı yapıldı.

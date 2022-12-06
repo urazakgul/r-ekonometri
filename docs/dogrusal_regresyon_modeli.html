@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.1.251">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>R ile Uygulamalı Ekonometri - 1&nbsp; Doğrusal Regresyon Modeli</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./francis_galton_regresyon.html" rel="next">
+<link href="./kutuphane.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Doğrusal Regresyon Modeli</span></h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">R ile Uygulamalı Ekonometri</a> 
+    </div>
+      </div>
+      <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+      </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">Önsöz</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./surec.html" class="sidebar-item-text sidebar-link">Süreç</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./veriseti.html" class="sidebar-item-text sidebar-link">Veri Setleri</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./kutuphane.html" class="sidebar-item-text sidebar-link">Kütüphaneler</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./dogrusal_regresyon_modeli.html" class="sidebar-item-text sidebar-link active"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Doğrusal Regresyon Modeli</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./francis_galton_regresyon.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Francis Galton ve Regresyon Terimi</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./kaynak.html" class="sidebar-item-text sidebar-link">Yararlandığım Kaynaklar</a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#genel" id="toc-genel" class="nav-link active" data-scroll-target="#genel"><span class="toc-section-number">1.1</span>  Genel</a></li>
+  <li><a href="#sıradan-en-küçük-kareler-ols" id="toc-sıradan-en-küçük-kareler-ols" class="nav-link" data-scroll-target="#sıradan-en-küçük-kareler-ols"><span class="toc-section-number">1.2</span>  Sıradan En Küçük Kareler (OLS)</a></li>
+  <li><a href="#klasik-drm-varsayımları" id="toc-klasik-drm-varsayımları" class="nav-link" data-scroll-target="#klasik-drm-varsayımları"><span class="toc-section-number">1.3</span>  Klasik DRM Varsayımları</a></li>
+  <li><a href="#ols-tahmincilerinin-standart-hataları" id="toc-ols-tahmincilerinin-standart-hataları" class="nav-link" data-scroll-target="#ols-tahmincilerinin-standart-hataları"><span class="toc-section-number">1.4</span>  OLS Tahmincilerinin Standart Hataları</a></li>
+  <li><a href="#hipotez-testleri" id="toc-hipotez-testleri" class="nav-link" data-scroll-target="#hipotez-testleri"><span class="toc-section-number">1.5</span>  Hipotez Testleri</a>
+  <ul class="collapse">
+  <li><a href="#t-testi" id="toc-t-testi" class="nav-link" data-scroll-target="#t-testi"><span class="toc-section-number">1.5.1</span>  t Testi</a></li>
+  <li><a href="#f-testi" id="toc-f-testi" class="nav-link" data-scroll-target="#f-testi"><span class="toc-section-number">1.5.2</span>  F Testi</a></li>
+  </ul></li>
+  <li><a href="#güven-aralığı" id="toc-güven-aralığı" class="nav-link" data-scroll-target="#güven-aralığı"><span class="toc-section-number">1.6</span>  Güven Aralığı</a></li>
+  <li><a href="#uyum-iyiliği" id="toc-uyum-iyiliği" class="nav-link" data-scroll-target="#uyum-iyiliği"><span class="toc-section-number">1.7</span>  Uyum İyiliği</a></li>
+  <li><a href="#uygulama" id="toc-uygulama" class="nav-link" data-scroll-target="#uygulama"><span class="toc-section-number">1.8</span>  Uygulama</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Doğrusal Regresyon Modeli</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+    
+  </div>
+  
+
+</header>
+
+<section id="genel" class="level2" data-number="1.1">
+<h2 data-number="1.1" class="anchored" data-anchor-id="genel"><span class="header-section-number">1.1</span> Genel</h2>
+<p>Temellerin atıldığı bir konu olduğu için bu bölümün çok önemli olduğunu düşünüyorum. William H. Greene, <em>“ekonometricinin alet çantasındaki en kullanışlı tek araç doğrusal regresyon modelidir.”</em> der. Doğrusal Regresyon Modeli (DRM) ile ilgili herhangi bir soru işaretinizin kalmadığına emin olmalısınız.</p>
+<p>DRM’yi şöyle yazalım:</p>
+<p><span class="math inline">\(Y_i = \beta_1 + \beta_2X_{2i} + ... + \beta_kX_{ki} + \epsilon_i\)</span></p>
+<p><span class="math inline">\(Y:\)</span> Bağımlı ya da açıklanan değişken.</p>
+<p><span class="math inline">\(X:\)</span> Bağımsız ya da açıklayıcı değişken.</p>
+<p><span class="math inline">\(\epsilon:\)</span> Rassal veya stokastik hata terimi. Çeşitli nedenler ile modele konulamayan değişkenleri içerir. Stokastik sözcüğü hedef ya da hedefin göbeği anlamına gelir. Peter Kennedy, stokastik ve hata terimini, <em>“Stokastik bir ilişki, okun nadiren hedefi tam on ikiden vurması gibi, bağımlı değişken değerinin tam olarak öngörülmesi anlamında, her zaman hedefi vuramaz. Hata terimi açıkça bu hedeften sapmaların ya da hataların büyüklüklerini belirlemek amacı ile kullanılır.”</em> örneği ile açıklar. Hata terimi gibi bir de kalıntı elde edeceğiz. İkisi aynı anlama gelmek ile beraber örneklem söz konusu olduğu zaman kullanılan ifade kalıntı olacaktır. Kennedy, hata terimi için <em>“ekonometristlerin kullandığı tahmin yöntemlerinin başarısı büyük bir oranda hata teriminin yapısına bağlıdır.”</em> der.</p>
+<p><span class="math inline">\(\beta_1:\)</span> Kesme terimi ya sa sabit terim. Tüm X’ler sıfıra eşitlendiğinde Y’nin ortalama değerini gösterir deriz ancak daha net bir ifadeyle modelde bulunmayan (aşağıda açıklanan hata terimine bakın) bütün değişkenlerin Y üzerindeki ortalama etkisidir.</p>
+<p><span class="math inline">\(\beta_2,...,\beta_k:\)</span> Kısmi eğim parametreleri ya da kısmi regresyon parametreleri.</p>
+<p><span class="math inline">\(\beta_1,\beta_2,...,\beta_k:\)</span> Regresyon parametreleri.</p>
+<p><span class="math inline">\(i:\)</span> i-nci gözlem.</p>
+<p>DRM’nin gösterimini aşağıdaki gibi sadeleştirmek mümkündür.</p>
+<p><span class="math inline">\(Y_i = \beta X + \epsilon_i\)</span></p>
+<p>Yukarıdaki eşitliklere anakütle modeli denir. Bu model, deterministik bileşen <span class="math inline">\(\beta X\)</span> ile rassal bileşen <span class="math inline">\(\epsilon_i\)</span>’nin birleşimidir. <span class="math inline">\(\beta X\)</span> için <span class="math inline">\(X\)</span> değerleri verildiğinde <span class="math inline">\(Y_i\)</span>’nin koşullu ortalaması <span class="math inline">\(E(Y_i|X)\)</span> diyebiliriz.</p>
+<p>Regresyon analizinde öncelikli amacımız X değişkenlerinin değerlerindeki değişimlere Y’nin verdiği ortalama tepkiyi ölçmektir. Bu noktada eğim parametrelerinden bahsedebiliriz. Eğim parametresi, diğer açıklayıcı değişkenlerin değerleri sabit tutulduğunda bir açıklayıcı değişken değerindeki bir birim değişim karşılığında Y’nin ortalama değerindeki değişimi ölçer. Yeri gelmişken kısmi eğim parametreleri ya da kısmi regresyon parametrelerini açıklayalım. Buradaki kısmilik şuradan gelir: Bir açıklayıcı değişkendeki bir birimlik değişimin Y’nin ortalaması üzerindeki doğrudan ya da net etkisi, diğer açıklayıcı değişkenlerin Y’nin ortalaması üzerinde olabilecek etkisinden arındırılarak ölçülür. Bu nedenle kısmi kavramı kullanılır.</p>
+</section>
+<section id="sıradan-en-küçük-kareler-ols" class="level2" data-number="1.2">
+<h2 data-number="1.2" class="anchored" data-anchor-id="sıradan-en-küçük-kareler-ols"><span class="header-section-number">1.2</span> Sıradan En Küçük Kareler (OLS)</h2>
+<p>Bu bölümün sonunda bir ücret regresyonu kuracağız. Buna geçmeden önce yukarıda yazdığımız aşağıdaki eşitliğin nasıl tahmin edileceğine bakalım.</p>
+<p><span class="math inline">\(Y_i = \beta_1 + \beta_2X_{2i} + ... + \beta_kX_{ki} + \epsilon_i\)</span></p>
+<p>Regresyon parametrelerini tahmin etmede sıradan en küçük kareler (OLS, Ordinary Least Squares) ciddi bir kullanımı olan bir yöntemdir.</p>
+<p><span class="math inline">\(\epsilon_i\)</span> dediğimiz hata terimi, gerçek Y değerleri ile regresyon modelinden elde edilen Y değerleri arasındaki farktır.</p>
+<p><span class="math inline">\(\epsilon_i = Y_i - (\beta_1 + \beta_2X_{2i} + ... + \beta_kX_{ki})\)</span></p>
+<p><span class="math inline">\(\epsilon_i = Y_i - \beta X\)</span></p>
+<p>OLS, bu hata teriminin kareler toplamını minimize eder.</p>
+<p><span class="math inline">\(\sum \epsilon_i^2 = \sum (\beta_1 - \beta_2X_{2i} - ... - \beta_kX_{ki})^2\)</span></p>
+<p>Hata kareler toplamını mümkün olduğunca küçük yapan <span class="math inline">\(\beta\)</span> parametresi değerleri bulunmalıdır. Tahmin edilen <span class="math inline">\(\beta\)</span> parametrelerini <span class="math inline">\(\theta\)</span> ile gösterelim.</p>
+<p><span class="math inline">\(\hat{Y_i} = \theta_1 + \theta_2X_{2i} + ... + \theta_kX_{ki} + e_i\)</span></p>
+<p>Yukarıdaki eşitliği aşağıdaki gibi sadeleştirebiliriz.</p>
+<p><span class="math inline">\(Y_i = \hat{Y_i} + e_i = \theta X + e_i\)</span></p>
+<p>Henüz gördüğümüz <span class="math inline">\(\hat{Y_i}\)</span>, <span class="math inline">\(\beta X\)</span>’in tahmincisidir. <span class="math inline">\(\beta\)</span> parametrelerinin tahmincileri <span class="math inline">\(\theta\)</span> parametreleri; <span class="math inline">\(\epsilon_i\)</span> hata teriminin tahmincisi ise <span class="math inline">\(e_i\)</span>’dir.</p>
+</section>
+<section id="klasik-drm-varsayımları" class="level2" data-number="1.3">
+<h2 data-number="1.3" class="anchored" data-anchor-id="klasik-drm-varsayımları"><span class="header-section-number">1.3</span> Klasik DRM Varsayımları</h2>
+<p>Klasik DRM’nin varsayımları model kurma sürecinin önemli bir parçası olacaktır. İlgili varsayımlar aşağıdaki gibidir.</p>
+<ul>
+<li>Regresyon modeli parametreler açısından doğrusaldır. Y ve X değişkenlerine göre ise doğrusallık aranmaz.</li>
+</ul>
+<p>Parametreler açısından doğrusallık: Parametrelerin kuvveti alınmamış (<span class="math inline">\(\beta_2^2\)</span> gibi), parametreler diğer parametrelere bölünmemiş (<span class="math inline">\(\beta_2 / \beta_3\)</span> gibi) veya dönüştürülmemiştir (<span class="math inline">\(ln\beta_4\)</span> gibi).</p>
+<p>Değişkenler açısından: Koşul aranmaz. Örneğin, X değişkeninin doğal logaritması (<span class="math inline">\(lnX_2\)</span> gibi), tersi (<span class="math inline">\(1/X_3\)</span> gibi) veya kuvveti (<span class="math inline">\(X_2^3\)</span> gibi) alınmış olabilir.</p>
+<ul>
+<li><p><span class="math inline">\(cov(\epsilon_i,X) = 0\)</span>. Değerlerinin tekrarlanmış örneklemlerde sabit olmasına bağlı olarak, açıklayıcı değişkenlerin sabit olduğu veya stokastik olmadığı varsayılır. Bu varsayıma sabit X değerleri ya da hata teriminden bağımsız X değerleri diyebiliriz. Yani, her X değişkeni ile <span class="math inline">\(\epsilon_i\)</span> arasındaki ortak varyans sıfırdır.</p></li>
+<li><p><span class="math inline">\(E(\epsilon_i|X) = 0\)</span>. X değişkenlerinin değerleri verildiğinde hata teriminin beklenen ya da ortalama değeri sıfırdır. Bu durumda yazdığımız <span class="math inline">\(Y_i = \beta X + \epsilon_i\)</span> eşitliğini <span class="math inline">\(E(Y_i|X) = \beta X + E(\epsilon_i|X) = \beta X\)</span> şeklinde yazabiliriz.</p></li>
+<li><p><span class="math inline">\(var(\epsilon_i|X) = \sigma^2\)</span>. X değerleri verildiğinde her bir <span class="math inline">\(\epsilon_i\)</span>’nin varyansı sabittir (sabit varyans).</p></li>
+<li><p><span class="math inline">\(cov(\epsilon_i,\epsilon_j|X) = 0, i\neq j\)</span>. İki hata terimi arasında korelasyon (otokorelasyon) yoktur.</p></li>
+<li><p>X değişkenleri arasında tam doğrusal ilişki ya da çoklu doğrusal bağlantı yoktur.</p></li>
+<li><p>Regresyon modeli doğru tanımlanmış olup herhangi bir tanımlama yanlılığı ya da hatası yoktur.</p></li>
+<li><p>Gözlem sayısı tahmin edilecek anakütle parametrelerinden fazla olmalıdır. Daha sade bir anlatım ile gözlem sayısı açıklayıcı değişken sayısından büyük olmalıdır diyebiliriz.</p></li>
+<li><p><span class="math inline">\(\epsilon_i \sim N(0,\sigma^2)\)</span>. Hata terimi sıfır ortalamalı ve <span class="math inline">\(\sigma^2\)</span> (sabit) varyanslı normal dağılıma sahiptir.</p></li>
+</ul>
+<p>Ayrıca OLS tahmincileri BLUE’dur. BLUE (Best Linear Unbiased Estimator), en iyi doğrusal yansız tahminci anlamına gelmektedir. Akılda tutmak için Doğrusal En iyi Sapmasız Tahmin Edici olan DESTE de kullanılabilir.</p>
+<ul>
+<li><p>Doğrusal tahminci: Tahminciler Y bağımlı değişkeninin doğrusal fonksiyonlarıdır.</p></li>
+<li><p>Yansız tahminci: Yöntemin tekrarlanan uygulamalarında tahminciler ortalama olarak gerçek değerlerine eşittir.</p></li>
+<li><p>En küçük varyansa sahip tahminci / etkin tahminci: Doğrusal yansız tahminciler sınıfı içinde OLS tahmincileri minimum varyansa sahiptir.</p></li>
+</ul>
+</section>
+<section id="ols-tahmincilerinin-standart-hataları" class="level2" data-number="1.4">
+<h2 data-number="1.4" class="anchored" data-anchor-id="ols-tahmincilerinin-standart-hataları"><span class="header-section-number">1.4</span> OLS Tahmincilerinin Standart Hataları</h2>
+<p><span class="math inline">\(\theta\)</span> OLS tahmincileri, değerleri örnekleme bağlı olarak değiştiği için rassal değişkendir. Bu noktada değişkenliği ölçmemiz gerekmektedir. İstatistikte de bu değişkenlik varyans (<span class="math inline">\(\sigma^2\)</span>) ve standart sapma (<span class="math inline">\(\sigma\)</span>) ile ölçülür. Bir tahmincinin standart sapması regresyon bağlamında standart hatadır. Standart hata, tahmin edicinin örneklem dağılımının standart sapmasıdır. DRM’de <span class="math inline">\(u_i\)</span> hata terimi varyansına (<span class="math inline">\(\sigma^2\)</span>) ait tahmin şöyledir:</p>
+<p><span class="math inline">\(\hat{\sigma}^2 = \frac{\sum e_i^2}{n-k}\)</span></p>
+<p>Burada, n örneklem büyüklüğü ilen k tahmin edilen regresyon parametre sayısıdır. <span class="math inline">\(\sqrt{\hat{\sigma}^2}\)</span> ya da <span class="math inline">\(\hat{\sigma}\)</span>, regresyonun standart hatası ya da kök ortalama karedir.</p>
+</section>
+<section id="hipotez-testleri" class="level2" data-number="1.5">
+<h2 data-number="1.5" class="anchored" data-anchor-id="hipotez-testleri"><span class="header-section-number">1.5</span> Hipotez Testleri</h2>
+<section id="t-testi" class="level3" data-number="1.5.1">
+<h3 data-number="1.5.1" class="anchored" data-anchor-id="t-testi"><span class="header-section-number">1.5.1</span> t Testi</h3>
+<p>Anakütle regresyon parametresi için <span class="math inline">\(\beta_k = 0\)</span> hipotezini test edelim.</p>
+<p><span class="math inline">\(H_0: \beta_k = 0\)</span></p>
+<p><span class="math inline">\(H_1: \beta_k \neq 0\)</span></p>
+<p>Bu hipotezin testi için ise şunu yazalım:</p>
+<p><span class="math inline">\(t = \frac{\theta_k}{se({\theta_k})}\)</span></p>
+<p>Burada t testini kullanyoruz. <span class="math inline">\(se({\theta_k})\)</span>, <span class="math inline">\(\theta_k\)</span>’nın standart hatasıdır. t değerinin (n-k) serbestlik derecesi vardır. Hesaplanan t değeri olasılığı düşük çıkarsa (%5 veya daha az gibi) <span class="math inline">\(\beta_k = 0\)</span> sıfır hipotezi reddedilir. Sıfır hipotezinin reddi ise t değerinin istatistiksel olarak anlamlı olduğu anlamına gelir. Daha geniş bir ifade ile diğer açıklayıcı değişkenler sabit iken incelenen değişkenin bağımlı değişken üzerinde istatistiksel olarak anlamlı bir etkisinin olduğu söylenebilir. Diyelim ki sıfır hipotezini kabul ettik. Burada edilen kabul, örneklem verilerine göre bu hipotezi reddedecek nedeni henüz bulamadığımızdandır. Yani, bu kabul net doğru anlamına gelmez. Özetle, kabul ederiz yerine reddedemeyiz demek yerinde olacaktır.</p>
+</section>
+<section id="f-testi" class="level3" data-number="1.5.2">
+<h3 data-number="1.5.2" class="anchored" data-anchor-id="f-testi"><span class="header-section-number">1.5.2</span> F Testi</h3>
+<p>t testi ile bireysel anlamlılığa bakıyorduk. Bütün eğim parametrelerinin aynı anda anlamlı olup olmadığına bakmak için ise F testini kullanacağız. Buna regresyonun genel anlamlılığı da diyebiliriz.</p>
+<p><span class="math inline">\(H_0: \beta_2 = \beta_3 = ... = \beta_k = 0\)</span></p>
+<p><span class="math inline">\(H_1:\)</span> En az bir <span class="math inline">\(\beta_i \neq 0\)</span></p>
+<p>F istatistiği şöyledir:</p>
+<p><span class="math inline">\(F = \frac{ESS/sd}{RSS/sd} = \frac{Ortalama \ ESS}{Ortalama \ RSS}\)</span></p>
+<p><span class="math inline">\(ESS = \sum (\hat{Y_i} - \bar{Y})^2\)</span></p>
+<p><span class="math inline">\(RSS = \sum (Y_i - \hat{Y_i})\)</span></p>
+<p><span class="math inline">\(TSS = \sum (Y_i - \bar{Y})^2\)</span></p>
+<p>ESS, Y bağımlı değişkenindeki değişkenliğin model tarafından açıklanan kısmı iken, RSS, Y bağımlı değişkenindeki değişkenliğin model tarafından açıklanmayan kısmıdır. Y bağımlı değişkenindeki toplam değişkenlik ise TSS olup ESS ile RSS’in toplamıdır. sd, serbestlik derecesidir ve payın serbestlik derecesi k-1 iken, paydanın serbestlik derecesi n-k’dır. Yukarıdaki eşitliği tekrar yazalım.</p>
+<p><span class="math inline">\(F = \frac{ESS}{TSS} = \frac{\sum (\hat{Y_i} - \bar{Y}) / (k - 1)}{\sum (Y_i - \hat{Y_i}) / (n - k)}\)</span></p>
+<p>Eğer hesaplayacağımız F değeri <span class="math inline">\(\alpha\)</span> seviyesindeki kritik F değerinden büyük ise sıfır hipotezi reddedilebilir ki bu da en az bir açıklayıcı değişkenin istatistiksel olarak anlamlı olduğu anlamına gelir.</p>
+</section>
+</section>
+<section id="güven-aralığı" class="level2" data-number="1.6">
+<h2 data-number="1.6" class="anchored" data-anchor-id="güven-aralığı"><span class="header-section-number">1.6</span> Güven Aralığı</h2>
+<p>Bir tek nokta tahminine güvenmek yerine belli bir olasılıkla (örneğin %95) gerçek parametreyi içerecek şekilde bir aralık oluşturabiliriz. Herhangi bir anakütle parametresi <span class="math inline">\(\beta_k\)</span> için (<span class="math inline">\(1-\alpha\)</span>) güven aralığı şöyledir:</p>
+<p><span class="math inline">\(Pr[\theta_k \pm t_{\alpha/2}se({\theta_k})] = (1-\alpha)\)</span></p>
+<p><span class="math inline">\([\theta_k - t_{\alpha/2}se({\theta_k})]\)</span>: Alt sınır</p>
+<p><span class="math inline">\([\theta_k + t_{\alpha/2}se({\theta_k})]\)</span>: Üst sınır</p>
+<p>Güven aralığının genişliği tahmin edicinin güvenilirliği olan standart hatası ile orantılıdır. Dikkat etmemiz gereken nokta bu güven aralığı gerçek <span class="math inline">\(\beta_k\)</span>’nın verilen alt ve üst sınırlar arasında yer alma olasılığının (<span class="math inline">\(1-\alpha\)</span>) olduğunu söylemez. Aksine gerçek <span class="math inline">\(\beta_k\)</span> değerini sabit bir sayı kabul ederiz ve bu olasılık da ya 1’dir ya da 0. Asıl söylediği, her 100 aralığın 95’inde (güven katsayısının %95 olduğunu varsayalım) gerçek <span class="math inline">\(\beta_k\)</span>’yı içerdiğidir.</p>
+</section>
+<section id="uyum-iyiliği" class="level2" data-number="1.7">
+<h2 data-number="1.7" class="anchored" data-anchor-id="uyum-iyiliği"><span class="header-section-number">1.7</span> Uyum İyiliği</h2>
+<p>Tahmin edilen regresyon doğrusunun uyum iyiliğinin ölçüsü <span class="math inline">\(R^2\)</span>’dir ve şöyle hesaplanır:</p>
+<p><span class="math inline">\(R^2 = \frac{ESS}{TSS}\)</span> ya da <span class="math inline">\(R^2 = 1 - \frac{RSS}{TSS}\)</span></p>
+<p><span class="math inline">\(R^2\)</span> değeri 0 ile 1 arasında yer alır (<span class="math inline">\(0 \leq R^2 \leq 1\)</span>) ve 1’e yaklaştıkça uyum iyileşir. Uyumun iyileşmesi açıklayıcılık gücünün arttığı anlamına gelir. Bu noktada modele açıklayıcı değişken ekledikçe <span class="math inline">\(R^2\)</span> değerinin artacağı bilinmelidir. Bu durumda düzeltilmiş <span class="math inline">\(R^2\)</span> ya da <span class="math inline">\(\bar{R^2}\)</span> kullanılabilir ve şöyle hesaplanır:</p>
+<p><span class="math inline">\(\bar{R^2} = 1 - (1 - R^2) \frac{n-1}{n-k}\)</span></p>
+<p>Düzeltilmiş ile serbestlik derecesi düzeltmesi kastedilmektedir. İki nokta:</p>
+<ul>
+<li><p><span class="math inline">\(k &gt; 1\)</span> ise <span class="math inline">\(\bar{R^2}\)</span> &lt; <span class="math inline">\(R^2\)</span>’dir.</p></li>
+<li><p><span class="math inline">\(R^2\)</span> daima pozitif iken <span class="math inline">\(\bar{R^2}\)</span> negatif olabilir.</p></li>
+</ul>
+<p>Yüksek <span class="math inline">\(\bar{R^2}\)</span> bulma yarışına bir not düşmek gerekir. Bizim asıl ilgimiz, açıklayıcı değişkenlerin bağımlı değişken ile olan mantıksal ilişkilerine ve onların istatistiksel anlamlılıklarına odaklı olmalıdır. Yüksek bir <span class="math inline">\(\bar{R^2}\)</span> bulamasak da bu modelin kötü olduğu anlamına gelmez.</p>
+</section>
+<section id="uygulama" class="level2" data-number="1.8">
+<h2 data-number="1.8" class="anchored" data-anchor-id="uygulama"><span class="header-section-number">1.8</span> Uygulama</h2>
+<p>Saatlik ücreti (dolar bazında) belirleyen faktörleri örneklemde araştırmak üzere, Mart 1995’te görüşme yapılan 1289 kişilik (anakütleden alınan örneklem) bir yatay-kesite bakalım. İlgili verilere <em>drm.xls</em> dosyası ile ulaşılabilir.</p>
+<p>Bağımlı değişken:</p>
+<ul>
+<li><strong>wage:</strong> Saatlik ücret ($)</li>
+</ul>
+<p>Bağımsız değişkenler:</p>
+<ul>
+<li><p><strong>female:</strong> Kadın ise 1; değilse 0</p></li>
+<li><p><strong>nonwhite:</strong> Beyaz olmayan işçi ise 1; değilse 0</p></li>
+<li><p><strong>union:</strong> Sendikalı bir işte ise 1; değilse 0</p></li>
+<li><p><strong>education:</strong> Yıl bazlı eğitim</p></li>
+<li><p><strong>exper:</strong> Yıl bazlı iş deneyimi. Yaş – eğitim süresi – 6 okula başlama yaşı</p></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readxl)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(magrittr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(<span class="st">"./data/drm.xls"</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>df <span class="sc">%&lt;&gt;%</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(wage, female, nonwhite, union, education, exper)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>DRM’yi kurabiliriz.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="fu">lm</span>(<span class="at">formula =</span> wage <span class="sc">~</span> female <span class="sc">+</span> nonwhite <span class="sc">+</span> union <span class="sc">+</span> education <span class="sc">+</span> exper, <span class="at">data =</span> df)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co">#ya da model &lt;- lm(formula = wage ~., data = df)</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = wage ~ female + nonwhite + union + education + exper, 
+    data = df)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-20.781  -3.760  -1.044   2.418  50.414 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept) -7.18334    1.01579  -7.072 2.51e-12 ***
+female      -3.07488    0.36462  -8.433  &lt; 2e-16 ***
+nonwhite    -1.56531    0.50919  -3.074  0.00216 ** 
+union        1.09598    0.50608   2.166  0.03052 *  
+education    1.37030    0.06590  20.792  &lt; 2e-16 ***
+exper        0.16661    0.01605  10.382  &lt; 2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 6.508 on 1283 degrees of freedom
+Multiple R-squared:  0.3233,    Adjusted R-squared:  0.3207 
+F-statistic: 122.6 on 5 and 1283 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+</div>
+<ul>
+<li>Regresyondaki açıklayıcı değişkenleri sıfıra eşitlediğimizde ortalama wage -$7.18 olur. Tabi bunun iktisadi açıdan bir anlamı yoktur. Ancak buna rağmen kesme terimini bırakmak faydalı olabilir.</li>
+</ul>
+<p>Diğer değişkenler sabit tutulduğunda;</p>
+<ul>
+<li><p>Kadınların ortalama wage’i erkeklerin ortalama wage’inden $3.07 daha düşüktür (female).</p></li>
+<li><p>Beyaz olmayan bir işçinin ortalama wage’i beyaz bir işçinin ortalama wage’inden $1.56 daha düşüktür (nonwhite).</p></li>
+<li><p>Sendikalı bir işte çalışanın ortalama wage’i sendikalı bir işte çalışmayanın ortalama wage’inden $1.09 daha fazladır (union).</p></li>
+<li><p>Her ilave eğitim yılı için ortalama wage $1.37 artmaktadır (education).</p></li>
+<li><p>Her ilave deneyim için ortalama wage $0.16 artmaktadır (exper).</p></li>
+</ul>
+<p>Diğer yorumlara bakalım.</p>
+<ul>
+<li><p>Bu model yardımı ile bir kişinin alacağı ücreti kesin olarak söyleyemeyiz. Sadece bu kişinin niteliklerine göre ne kazanabileceğini öngörebiliriz.</p></li>
+<li><p>p değeri küçüldükçe sıfır hipotezi aleyhindeki kanıtlar daha da güçlenir. Örneğin, yaklaşık 1.37 olan education parametresine ait değerin yaklaşık 20.79 olan bir t değeri hesaplandı. p değeri neredeyse sıfırdır (2e-16). Bu durumda education parametresi istatistiksel olarak oldukça anlamlıdır. Yani, education değişkeni wage değişkeninin önemli bir belirleyicisidir. %5 gibi bir p değeri aldığımızda tüm parametrelerin istatistiksel olarak anlamlı olduğunu görüyoruz. Yani tüm değişkenler wage’in önemli bir belirleyicisidir.</p></li>
+<li><p><span class="math inline">\(R^2\)</span> değeri yaklaşık olarak 0.32’dir. Wage değişkenindeki değişkenliğin yaklaşık %32’si beş açıklayıcı değişken tarafından açıklanmaktadır.</p></li>
+<li><p>F değerine ait p değeri neredeyse sıfır (2.2e-16) olduğu için en az bir değişkenin wage değişkeni üzerinde anlamlı bir etkisi vardır. F değerini manuel hesaplayalım. Manuel hesaplarken F değerinin <span class="math inline">\(R^2\)</span> ile olan ilişkisini göreceğiz.</p></li>
+</ul>
+<p>(k-1): Kesme terimi dışarıda tutulduğunda açıklayıcı değişken sayısı (5)</p>
+<p>n: Gözlem sayısı 1289 ile kesme terimi dahil tahmin edilen parametre sayısı 6’nın farkı (1283)</p>
+<p><span class="math inline">\(F = \frac{R^2/(k-1)}{(1-R^2)/(n-k)} = \frac{0.3233/5}{(1-0.3233)/(1283)} = 122.6\)</span></p>
+<ul>
+<li>Gerçek education parametresinin en iyi tek tahmini 1.37’dir ama bunu örneğin %95 güven aralığında da yorumlayabiliriz. Aşağıdan da görüleceği üzere, diğer şeyler sabit iken ek 1 yıllık eğitimin wage üzerindeki etkisinin minimum $1.24 ve maksimum $1.49 olduğu konusunda %95 güvendeyiz. Hatırlayalım: gerçek education parametresinin $1.32 olduğunu varsayalım. Bu durumda $1.32 bu aralıkta ya yer alır ya da yer almaz. Olasılık ya 1’dir ya da 0’dır. Aralık, her 100 aralığın 95’inde (güven katsayısının %95 olduğunu varsayalım) gerçek education parametresini içerir. %95 güven katsayısı ile hareket ettiğimizde %5’inde hatalı oluruz.</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">confint</span>(model, <span class="at">level =</span> <span class="fl">0.95</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                 2.5 %     97.5 %
+(Intercept) -9.1761258 -5.1905507
+female      -3.7901849 -2.3595660
+nonwhite    -2.5642450 -0.5663817
+union        0.1031443  2.0888072
+education    1.2410091  1.4995928
+exper        0.1351242  0.1980889</code></pre>
+</div>
+</div>
+<p>Aşağıdaki değerler ile beklenen ortalama ücreti bulalım.</p>
+<ul>
+<li><p>female: 1</p></li>
+<li><p>nonwhite: 1</p></li>
+<li><p>union: 0</p></li>
+<li><p>education: 12</p></li>
+<li><p>exper: 20</p></li>
+</ul>
+<p>Kadın, beyaz olmayan, sendikası olmayan, 12 yıllık eğitime sahip, 20 yıllık iş deneyimi olan bir işçinin beklenen ortalama ücretine bakıyoruz.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>df2 <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">female =</span> <span class="dv">1</span>,</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">nonwhite =</span> <span class="dv">1</span>,</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">union =</span> <span class="dv">0</span>,</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">education =</span> <span class="dv">12</span>,</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">exper =</span> <span class="dv">20</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>wage_pred <span class="ot">&lt;-</span> <span class="fu">predict</span>(</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    model, <span class="at">newdata =</span> df2</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="fu">paste0</span>(<span class="st">"$"</span>,<span class="fu">round</span>(wage_pred,<span class="at">digits=</span><span class="dv">2</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "$7.95"</code></pre>
+</div>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./kutuphane.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Kütüphaneler</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./francis_galton_regresyon.html" class="pagination-link">
+        <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Francis Galton ve Regresyon Terimi</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+</body></html>

@@ -1,0 +1,11 @@
+# Kütüphaneler {.unnumbered}
+
+```{r}
+#| eval: false
+
+library(readxl)
+library(tidyverse)
+library(magrittr)
+library(HistData)
+
+```

@@ -1,0 +1,24 @@
+project:
+  type: book
+  output-dir: docs
+
+book:
+  title: "R ile Uygulamalı Ekonometri"
+  author: "Uraz Akgül"
+  date: "12/6/2022"
+  chapters:
+    - index.qmd
+    - surec.qmd
+    - veriseti.qmd
+    - kutuphane.qmd
+    - dogrusal_regresyon_modeli.qmd
+    - francis_galton_regresyon.qmd
+    - kaynak.qmd
+
+#bibliography: references.bib
+
+format:
+  html:
+    theme: cosmo
+  pdf:
+    documentclass: scrreprt

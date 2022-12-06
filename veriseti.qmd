@@ -1,0 +1,3 @@
+# Veri Setleri {.unnumbered}
+
+Kitap boyunca kullanılacak veri setlerine [<u>buradan</u>](https://github.com/rpydaneogrendim/r-ekonometri/data) ulaşabilirsiniz.
