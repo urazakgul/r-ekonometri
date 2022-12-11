@@ -1,0 +1,417 @@
+# Regresyon Modellerinin Fonksiyon Yapıları
+
+Klasik Doğrusal Regresyon Modeli'nin varsayımlarından birisi şöyleydi:
+
+* Regresyon modeli parametreler açısından doğrusaldır. Y ve X değişkenlerine göre ise doğrusallık aranmaz.
+
+Parametreler açısından doğrusallık: Parametrelerin kuvveti alınmamış ($\beta_2^2$ gibi), parametreler diğer parametrelere bölünmemiş ($\beta_2 / \beta_3$ gibi) veya dönüştürülmemiştir ($ln\beta_4$ gibi).
+
+Değişkenler açısından: Koşul aranmaz. Örneğin, X değişkeninin doğal logaritması ($lnX_2$ gibi), tersi ($1/X_3$ gibi) veya kuvveti ($X_2^3$ gibi) alınmış olabilir.
+
+Bu başlıkta, parametrelere göre doğrusal olan ancak değişkenlere göre doğrusal olup olmamasının bir önemi olmayan modelleri ele alacağız.
+
+## Log-Log
+
+Log-Log, hem bağımlı değişkenin hem de açıklayıcı değişkenlerin logaritmik yapıda olduğu bir fonksiyon kalıbı türüdür.
+
+Üstel regresyon modelini inceleyelim.
+
+$Y_i = \beta_1X_i^{\beta_2}e^{\epsilon_i}$
+
+Yukarıdaki model doğal logaritması alınarak şöyle yazılabilir:
+
+$lnY_i = ln\beta_1 + \beta_2lnX_i + \epsilon_i$
+
+Son olarak aşağıdaki forma çevirebiliriz.
+
+$lnY_i = \alpha + \beta_2lnX_i + \epsilon_i$
+
+Cobb-Douglas fonksiyonu ile devam edelim.
+
+$Q_i = \beta_1L_i^{\beta_2}K_i^{\beta_3}$
+
+$Q:$ Çıktı
+
+$L:$ Emek Girdisi
+
+$K:$ Sermaye
+
+$\beta_1:$ Sabit
+
+Yukarıdaki model parametreler açısından doğrusal değildir ki bu da doğrusal olmayan yöntemler ile ilerlenmesini gerektirir. Peki, (doğal) logaritmasını alırsak tam da varsayımda istediğimiz gibi parametreler açısından doğrusal olabilir mi?
+
+$lnQ_i = ln\beta_1 + \beta_2lnL_i + \beta_3lnK_i$
+
+$ln\beta_1$'e A dersek;
+
+$lnQ_i = A + \beta_2lnL_i + \beta_3lnK_i$ olur. Yazılan eşitlik;
+
+* $Q$, $L$ ve $K$ değişkenleri açısından doğrusal değildir
+
+* $A$, $\beta_2$ ve $\beta_3$ parametrelerine göre doğrusaldır
+
+Hata terimi $\epsilon_i$ de eklenirse doğrusal regresyon modelinin son hali elde edilir.
+
+$lnQ_i = A + \beta_2lnL_i + \beta_3lnK_i + \epsilon_i$
+
+### Uygulama
+
+ABD için Cobb-Douglas fonksiyonuna bakalım. İlgili verilere *rmfk1.xls* dosyası ile ulaşılabilir.
+
+```{r}
+#| warning: false
+
+library(readxl)
+library(tidyverse)
+library(ggthemes)
+library(magrittr)
+
+df1 <- read_excel("./data/rmfk1.xls")
+
+df1 %<>%
+select(output,labor,capital)
+
+```
+
+Bağımlı değişken:
+
+* **output:** ABD imalat sektörüne ait çıktı (katma değerle ölçülmüş, bin dolar)
+
+Bağımsız değişkenler:
+
+* **labor:** Emek girdisi (çalışma saati, bin saat)
+
+* **capital:** Sermaye girdisi (sermaye harcaması, bin dolar)
+
+Değişkenleri logaritmik yapıda yazalım.
+
+```{r}
+
+df1 %<>%
+mutate(
+    ln_output = log(output),
+    ln_labor = log(labor),
+    ln_capital = log(capital)
+)
+
+```
+
+Model kurulabilir.
+
+```{r}
+
+loglog_model <- lm(ln_output ~ ln_labor + ln_capital, data = df1)
+summary(loglog_model)
+
+```
+
+$Q_i = 48.79L^{0.47}K^{0.52}$
+
+Sabit değer 3.8876'nın ters logaritması yaklaşık olarak 48.79'dur.
+
+```{r}
+
+exp(as.numeric(coef(loglog_model)[1]))
+
+```
+
+Yukarıdaki model çıktısının yorumları şöyledir:
+
+* Çok küçük p değerlerine sahip regresyon parametreleri bireysel açıdan istatistiksel olarak anlamlıdır.
+
+* F istatistiğine ait p değeri çok küçük olduğu için model istatistiksel olarak anlamlıdır.
+
+* 0.96 gibi çok yüksek bir $R^2$ sevindirici olmak ile beraber bir soru işareti de yaratabilir.
+
+* Log-Log modellerde eğim parametreleri esneklik olarak yorumlanabilir. Aynı zamanda ölçüm birimleri ortadan kalkar ve yüzde değişim altında değerlendirilirler.
+
+Sermaye girdisi (ln_capital) sabit iken, emek girdisi (ln_labor) %1 artırılırsa imalat sektörüne ait çıktı ortalamada %0.47 artar.
+
+Emek girdisi (ln_labor) sabit iken, sermaye girdisi (ln_capital) %1 artırılırsa imalat sektörüne ait çıktı ortalamada %0.52 artar.
+
+## Log-Lin
+
+Bağımlı değişkenin logaritmik; diğer açıklayıcı değişkenlerin düzey ya da doğrusal yapıda olduğu bir fonksiyon kalıbı türüdür.
+
+Bileşik faiz formülünü anımsayalım.
+
+$Y_t = Y_0(1+r)^t$
+
+r, Y'nin bileşik (zaman içindeki) büyüme hızıdır.
+
+Eşitliğin logaritmasını alalım.
+
+$lnY_t = lnY_0 + tln(1+r)$
+
+$lnY_0$, $\beta_1$; $ln(1+r)$ ise $\beta_2$ olsun.
+
+$lnY_t = \beta_1 + \beta_2t + \epsilon_t$ olur.
+
+Belli bir dönem (1998-2021 olsun) için reel GSYH'nin büyüme hızı ölçülmek isteniyorsa $RGDP_t = RGDP_{1998}(1+r)^t$ modeli kullanılabilir.
+
+$RGDP:$ Reel GSYH
+
+$r:$ Büyüme hızı
+
+$t:$ Kronolojik zaman
+
+Her iki tarafın (doğal) logaritmasını alalım.
+
+$lnRGDP_t = lnRGDP_{1998} + tln(1+r)$
+
+$\beta_1$, $lnRGDP_{1998}$ ve $\beta_2$, $ln(1+r)$ olsun.
+
+$lnRGDP_t = \beta_1 + \beta_2t + \epsilon_t$ olur. Bu eşitlikte açıklayıcı değişken zamandır. Yani, t = 1,2,3,...,24.
+
+### Uygulama
+
+Türkiye'nin reel GSYH büyüme hızına bakalım. Bu uygulamada, TÜİK'ten elde edilen mevsim ve takvim etkisinden arındırılmış harcama yöntemiyle GSYH, zincirlenmiş hacim endeksi kullanılacaktır. İlgili verilere *rmfk2.xlsx* dosyası ile ulaşılabilir.
+
+Aşağıda açıklayıcı değişken olarak zaman değişkenini (t) ve RGDP'nin (doğal) logaritmasını ekledik.
+
+```{r}
+
+df2 <- read_excel("./data/rmfk2.xlsx")
+
+df2 %<>%
+mutate(
+    t = seq(1,nrow(.),1),
+    ln_rgdp = log(rgdp)
+)
+
+```
+
+Bağımlı değişken:
+
+* **ln_rgdp:** TÜİK'ten elde edilen mevsim ve takvim etkisinden arındırılmış harcama yöntemiyle GSYH, zincirlenmiş hacim endeksi
+
+Bağımsız değişken:
+
+* **t:** Zaman
+
+```{r}
+#| warning: false
+
+ggplot(df2, aes(x = t, y = ln_rgdp)) +
+geom_line(color = "blue", size = 1) +
+geom_smooth(method = "lm", color = "red", size = 1) +
+theme_fivethirtyeight() +
+labs(
+    title = "Türkiye Reel GSYH'sinin Logaritması, 1998-2021",
+    caption = "Kaynak: TÜİK"
+)
+
+```
+
+Modeli kuralım.
+
+```{r}
+
+loglin_model <- lm(ln_rgdp ~ t, data = df2)
+summary(loglin_model)
+
+```
+
+Yukarıdaki model çıktısının yorumları şöyledir:
+
+* Çok küçük p değerlerine sahip regresyon parametreleri bireysel açıdan istatistiksel olarak anlamlıdır.
+
+* F istatistiğine ait p değeri çok küçük olduğu için model istatistiksel olarak anlamlıdır.
+
+* Büyüme hızını hesaplamak için $\beta_2$ 100 ile çarpılır. Model, 1998-2021 döneminde Türkiye reel GSYH'sinin yıllık %4.9 oranında artmış olduğunu gösteriyor. 36.15 tahmin edilen t değeri istatistiksel açıdan oldukça anlamlıdır. Bu da aynı zamanda büyüme hızının anlamlı olduğunu gösterir.
+
+* Kesme terimi 4.13'ün ters logaritması 61.89'dur. Bu da aşağı yukarı 1998'e ait değerdir.
+
+```{r}
+
+df2$rgdp[1]
+
+```
+
+$\beta_2$ parametresi bileşik büyüme hızı r'yi değil; anlık büyüme hızını verir. Eğer $r = exp(\beta_2)-1$ yapılırsa bileşik büyüme hızına ulaşılır.
+
+```{r}
+
+exp(as.numeric(coef(loglin_model)[2])) - 1
+
+```
+
+Yani, yaklaşık %5.1'dir. Bileşim olması sebebiyle anlık büyüme hızı %4.9'dan biraz daha fazla hesaplanmıştır.
+
+### Ek: Doğrusal Trend Modeli
+
+Yukarıdaki büyüme modeli yerine doğrusal trend modeli ile tahmin etmek istediğimizi varsayalım.
+
+$RGDP_t = \beta_1 + \beta_2zaman + \epsilon_t$
+
+Yukarıdaki eşitlikte, $\beta_2$ eğim parametresi birim dönemde RGDP'deki mutlak değişimi verir. $\beta_2$ pozitif ise RGDP'de (farklı bir değişken de olabilirdi) yükselen bir trend vardır. Tam tersi, negatif ise azalan bir trend anlamına gelecektir.
+
+```{r}
+
+dtrend_model <- lm(rgdp ~ t, data = df2)
+summary(dtrend_model)
+
+```
+
+1998-2021 döneminde endeksin 5.9 arttığını görüyoruz. Aynı zamanda artı işaretli olması yükselen bir trendin olduğunu göstermektedir.
+
+## Lin-Log
+
+Log-Lin ile açıklayıcı değişkendeki 1 birim değişime karşılık bağımlı değişkendeki yüzde büyüme ile ilgileniyorduk. Lin-Log'da ise aşağıdaki model tahmin edilir.
+
+$Y_i = \beta_1 + \beta_2lnX_i + \epsilon_i$
+
+Yani, lin-log modellerde bağımlı değişken doğrusal yapıda iken en az bir açıklayıcı değişken logaritmik yapıdadır.
+
+### Uygulama
+
+ABD için gıda harcamasına bakalım. İlgili verilere *rmfk3.xls* dosyası ile ulaşılabilir.
+
+Aşağıda açıklayıcı değişkenin logaritmasını ekledik.
+
+```{r}
+
+df3 <- read_excel("./data/rmfk3.xls")
+
+df3 %<>%
+select(sfdho,expend) %>%
+mutate(
+    ln_expend = log(expend)
+)
+
+```
+
+Bağımlı değişken:
+
+* **sfdho:** Gıda harcamasının toplam harcamadaki payı
+
+Bağımsız değişken:
+
+* **expend:** Toplam hanehalkı harcaması
+
+```{r}
+
+linlog_model <- lm(sfdho ~ ln_expend, data = df3)
+summary(linlog_model)
+
+```
+
+Yukarıdaki model çıktısının yorumları şöyledir:
+
+* Çok küçük p değerlerine sahip regresyon parametreleri bireysel açıdan istatistiksel olarak anlamlıdır.
+
+* F istatistiğine ait p değeri çok küçük olduğu için model istatistiksel olarak anlamlıdır.
+
+* Toplam harcama %1 arttığında gıda harcamasının toplam harcamadaki payı ortalamada 0.0008 birim düşecektir. Burada önemli bir not: Tahmin edilen eğim parametresi değeri 0.01 ile çarpılmalı ya da 100'e bölünmelidir. Yorum şöyle de yapılabilir: Toplam harcama %100 arttığında gıda harcamasının toplam harcamadaki payı ortalamada 0.08 birim azalır.
+
+## Ters Model
+
+Yukarıdaki örneğe ait ilişki ters olabilir mi?
+
+$Y_i = \beta_1 + \beta_2 (\frac{1}{X_i}) + \epsilon_i$
+
+$SFDHO = \beta_1 + \beta_2 (\frac{1}{Expend_i}) + \epsilon_i$
+
+### Uygulama
+
+```{r}
+#| warning: false
+
+ggplot(df3, aes(x = ln_expend, y = sfdho)) +
+geom_point() +
+geom_smooth(method = "lm", color = "red") +
+theme_fivethirtyeight() +
+labs(
+    title = "Gıda Harcaması Payı ile Log Toplam Harcama İlişkisi"
+)
+
+ggplot(df3, aes(x = expend, y = sfdho)) +
+geom_point() +
+geom_smooth(method = "lm", formula = y ~ poly(x, 2, raw = TRUE), color = "red") +
+theme_fivethirtyeight() +
+labs(
+    title = "Gıda Harcaması Payı ile Toplam Harcama İlişkisi"
+)
+
+```
+
+```{r}
+
+df3 %<>%
+mutate(
+    ters_expend = 1 / expend
+)
+
+```
+
+Modeli kuralım.
+
+```{r}
+
+ters_model <- lm(sfdho ~ ters_expend, data = df3)
+summary(ters_model)
+
+```
+
+Yukarıdaki model çıktısının yorumları şöyledir:
+
+* Çok küçük p değerlerine sahip regresyon parametreleri bireysel açıdan istatistiksel olarak anlamlıdır.
+
+* F istatistiğine ait p değeri çok küçük olduğu için model istatistiksel olarak anlamlıdır.
+
+* Toplam harcama sonsuza gittiğinde gıda harcaması payı yaklaşık olarak %8'e yerleşecektir. Çünkü açıklayıcı değişken X sonsuza giderken $\beta_2(1/X_i)$ sıfıra yaklaşır. Y ise limit değer olan $\beta_1$'e yaklaşır.
+
+* $\beta_2$ eğim parametresi pozitiftir. Yani, gıda harcaması payının toplam harcamaya göre değişim hızı her noktada negatif olacaktır. Eğer $\beta_2$ negatif olsaydı bu defa her noktada pozitif olacaktı.
+
+## Polinom Regresyon
+
+### Uygulama
+
+Türkiye'nin reel GSYH'si için aşağıdaki modele bakalım.
+
+$RGDP_t = \beta_1 + \beta_2zaman + \beta_3zaman^2 + \epsilon_t$
+
+Yukarıdaki eşitlik zaman değişkenine göre karesel fonksiyon ya da ikinci derece polinomdur. Eğer bu modele $zaman^3$ eklenseydi üçüncü derece bir polinom denklemi olacaktı. Kısaca, açıklayıcı değişkenin en büyük kuvveti polinomun derecesine eşittir.
+
+```{r}
+
+df2 %<>%
+mutate(
+    t2 = t^2
+)
+
+```
+
+Modeli kuralım.
+
+```{r}
+
+polinom2_model <- lm(rgdp ~ t + t2, data = df2)
+summary(polinom2_model)
+
+```
+
+$\frac{dRGDP}{dt} = 2.21 + 2(0.15)zaman = 2.21 + 0.3zaman$
+
+Yukarıda, RGDP'nin değişim hızı bu değişim hızının ölçüldüğü zamana bağlıdır. Zamana göre ikinci türev alınırsa, 0.3 değeri elde edilir. Bu da değişim hızının zaman içinde sabit olan değişim hızıdır. İkinci türev pozitif ise RGDP artan bir oranda artmaktadır.
+
+Az önce tahmin edilen model yerine aşağıdaki model tahmin edilmek istensin.
+
+$lnRGDP_t = \beta_1 + \beta_2t + \beta_3t^2 + \epsilon_t$
+
+Modeli kuralım.
+
+```{r}
+
+polinom2_model_l <- lm(ln_rgdp ~ t + t2, data = df2)
+summary(polinom2_model_l)
+
+```
+
+$\frac{dlnRGDP}{dt} = \beta_2 + 2\beta_3t$
+
+$\frac{1}{RGDP} \frac{dRGDP}{dt} = \beta_2 + 2\beta_3t$
+
+RGDP'nin büyüme hızı = $\beta_2 + 2\beta_3t = 0.047 + 0.0002t$
+
+RGDP'nin büyüme hızı birim zaman başına 0.0002 oranında artmaktadır.

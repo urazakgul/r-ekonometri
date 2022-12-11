@@ -1,7 +1,7 @@
 {
-  "hash": "15e16827b1754bf33d0b1b146040b9fa",
+  "hash": "7aeed640b6f8737a8968dce66361016f",
   "result": {
-    "markdown": "# Kütüphaneler {.unnumbered}\n\n\n::: {.cell}\n\n```{.r .cell-code}\nlibrary(readxl)\nlibrary(tidyverse)\nlibrary(magrittr)\nlibrary(HistData)\n```\n:::\n",
+    "markdown": "# Kütüphaneler {.unnumbered}\n\n\n::: {.cell}\n\n```{.r .cell-code}\nlibrary(readxl)\nlibrary(tidyverse)\nlibrary(ggthemes)\nlibrary(magrittr)\nlibrary(HistData)\n```\n:::\n",
     "supporting": [],
     "filters": [
       "rmarkdown/pagebreak.lua"

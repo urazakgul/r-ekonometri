@@ -3,3 +3,7 @@
 06/12/2022:
 
 * Projenin ilk paylaşımı yapıldı.
+
+11/12/2022:
+
+* **Regresyon Modellerinin Fonksiyon Yapıları** konusu eklendi.
