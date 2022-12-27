@@ -205,7 +205,7 @@ library(magrittr)
 df <- read_excel("./data/drm.xls")
 
 df %<>%
-  select(wage, female, nonwhite, union, education, exper)
+select(wage, female, nonwhite, union, education, exper)
 
 ```
 

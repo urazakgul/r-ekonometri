@@ -218,9 +218,9 @@ Yukarıdaki model çıktısının yorumları şöyledir:
 
 * F istatistiğine ait p değeri çok küçük olduğu için model istatistiksel olarak anlamlıdır.
 
-* Büyüme hızını hesaplamak için $\beta_2$ 100 ile çarpılır. Model, 1998-2021 döneminde Türkiye reel GSYH'sinin yıllık %4.9 oranında artmış olduğunu gösteriyor. 36.15 tahmin edilen t değeri istatistiksel açıdan oldukça anlamlıdır. Bu da aynı zamanda büyüme hızının anlamlı olduğunu gösterir.
+* Büyüme hızını hesaplamak için $\beta_2$ 100 ile çarpılır. Model, 1998-2021 döneminde Türkiye reel GSYH'sinin yıllık %4.9 oranında artmış olduğunu gösteriyor. 35.19 tahmin edilen t değeri istatistiksel açıdan oldukça anlamlıdır. Bu da aynı zamanda büyüme hızının anlamlı olduğunu gösterir.
 
-* Kesme terimi 4.13'ün ters logaritması 61.89'dur. Bu da aşağı yukarı 1998'e ait değerdir.
+* Kesme terimi 4.11'in ters logaritması 61.11'dir. Bu da aşağı yukarı 1998'e ait değerdir.
 
 ```{r}
 
@@ -253,7 +253,7 @@ summary(dtrend_model)
 
 ```
 
-1998-2021 döneminde endeksin 5.9 arttığını görüyoruz. Aynı zamanda artı işaretli olması yükselen bir trendin olduğunu göstermektedir.
+1998-2021 döneminde endeksin 5.7 arttığını görüyoruz. Aynı zamanda artı işaretli olması yükselen bir trendin olduğunu göstermektedir.
 
 ## Lin-Log
 
@@ -391,7 +391,7 @@ summary(polinom2_model)
 
 ```
 
-$\frac{dRGDP}{dt} = 2.21 + 2(0.15)zaman = 2.21 + 0.3zaman$
+$\frac{dRGDP}{dt} = 2.09 + 2(0.15)zaman = 2.09 + 0.3zaman$
 
 Yukarıda, RGDP'nin değişim hızı bu değişim hızının ölçüldüğü zamana bağlıdır. Zamana göre ikinci türev alınırsa, 0.3 değeri elde edilir. Bu da değişim hızının zaman içinde sabit olan değişim hızıdır. İkinci türev pozitif ise RGDP artan bir oranda artmaktadır.
 
@@ -412,6 +412,6 @@ $\frac{dlnRGDP}{dt} = \beta_2 + 2\beta_3t$
 
 $\frac{1}{RGDP} \frac{dRGDP}{dt} = \beta_2 + 2\beta_3t$
 
-RGDP'nin büyüme hızı = $\beta_2 + 2\beta_3t = 0.047 + 0.0002t$
+RGDP'nin büyüme hızı = $\beta_2 + 2\beta_3t = 0.044 + 0.0002t$
 
 RGDP'nin büyüme hızı birim zaman başına 0.0002 oranında artmaktadır.

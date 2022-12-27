@@ -8,5 +8,7 @@ library(tidyverse)
 library(ggthemes)
 library(magrittr)
 library(HistData)
+library(zoo)
+library(segmented)
 
 ```

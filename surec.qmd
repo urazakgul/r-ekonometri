@@ -7,3 +7,9 @@
 11/12/2022:
 
 * **Regresyon Modellerinin Fonksiyon Yapıları** konusu eklendi.
+
+27/12/2022:
+
+* *rmfk2.xlsx* dosyasındaki, TÜİK'ten elde edilen mevsim ve takvim etkisinden arındırılmış harcama yöntemiyle GSYH, zincirlenmiş hacim endeksi verileri yıllık ortalama değerler ile değiştirilmiştir.
+
+* **Nitel Açıklayıcı Değişkenli Regresyon Modelleri** konusu eklendi.

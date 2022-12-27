@@ -93,7 +93,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./kaynak.html" rel="next">
+<link href="./kukla_degisken.html" rel="next">
 <link href="./francis_galton_regresyon.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -190,6 +190,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./regresyon_model_fonksiyon.html" class="sidebar-item-text sidebar-link active"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Regresyon Modellerinin Fonksiyon Yapıları</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./kukla_degisken.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Nitel Açıklayıcı Değişkenli Regresyon Modelleri</span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -421,38 +426,38 @@ lm(formula = ln_rgdp ~ t, data = df2)
 
 Residuals:
      Min       1Q   Median       3Q      Max 
--0.11031 -0.03200  0.00843  0.03437  0.07206 
+-0.09438 -0.02607  0.01240  0.02780  0.09694 
 
 Coefficients:
             Estimate Std. Error t value Pr(&gt;|t|)    
-(Intercept) 4.125340   0.019528  211.25   &lt;2e-16 ***
-t           0.049405   0.001367   36.15   &lt;2e-16 ***
+(Intercept)  4.11259    0.01986  207.09   &lt;2e-16 ***
+t            0.04891    0.00139   35.19   &lt;2e-16 ***
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
-Residual standard error: 0.04635 on 22 degrees of freedom
-Multiple R-squared:  0.9834,    Adjusted R-squared:  0.9827 
-F-statistic:  1307 on 1 and 22 DF,  p-value: &lt; 2.2e-16</code></pre>
+Residual standard error: 0.04713 on 22 degrees of freedom
+Multiple R-squared:  0.9825,    Adjusted R-squared:  0.9818 
+F-statistic:  1239 on 1 and 22 DF,  p-value: &lt; 2.2e-16</code></pre>
 </div>
 </div>
 <p>Yukarıdaki model çıktısının yorumları şöyledir:</p>
 <ul>
 <li><p>Çok küçük p değerlerine sahip regresyon parametreleri bireysel açıdan istatistiksel olarak anlamlıdır.</p></li>
 <li><p>F istatistiğine ait p değeri çok küçük olduğu için model istatistiksel olarak anlamlıdır.</p></li>
-<li><p>Büyüme hızını hesaplamak için <span class="math inline">\(\beta_2\)</span> 100 ile çarpılır. Model, 1998-2021 döneminde Türkiye reel GSYH’sinin yıllık %4.9 oranında artmış olduğunu gösteriyor. 36.15 tahmin edilen t değeri istatistiksel açıdan oldukça anlamlıdır. Bu da aynı zamanda büyüme hızının anlamlı olduğunu gösterir.</p></li>
-<li><p>Kesme terimi 4.13’ün ters logaritması 61.89’dur. Bu da aşağı yukarı 1998’e ait değerdir.</p></li>
+<li><p>Büyüme hızını hesaplamak için <span class="math inline">\(\beta_2\)</span> 100 ile çarpılır. Model, 1998-2021 döneminde Türkiye reel GSYH’sinin yıllık %4.9 oranında artmış olduğunu gösteriyor. 35.19 tahmin edilen t değeri istatistiksel açıdan oldukça anlamlıdır. Bu da aynı zamanda büyüme hızının anlamlı olduğunu gösterir.</p></li>
+<li><p>Kesme terimi 4.11’in ters logaritması 61.11’dir. Bu da aşağı yukarı 1998’e ait değerdir.</p></li>
 </ul>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>df2<span class="sc">$</span>rgdp[<span class="dv">1</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 69.88154</code></pre>
+<pre><code>[1] 70.7</code></pre>
 </div>
 </div>
 <p><span class="math inline">\(\beta_2\)</span> parametresi bileşik büyüme hızı r’yi değil; anlık büyüme hızını verir. Eğer <span class="math inline">\(r = exp(\beta_2)-1\)</span> yapılırsa bileşik büyüme hızına ulaşılır.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">exp</span>(<span class="fu">as.numeric</span>(<span class="fu">coef</span>(loglin_model)[<span class="dv">2</span>])) <span class="sc">-</span> <span class="dv">1</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.0506454</code></pre>
+<pre><code>[1] 0.05012937</code></pre>
 </div>
 </div>
 <p>Yani, yaklaşık %5.1’dir. Bileşim olması sebebiyle anlık büyüme hızı %4.9’dan biraz daha fazla hesaplanmıştır.</p>
@@ -472,21 +477,21 @@ lm(formula = rgdp ~ t, data = df2)
 
 Residuals:
      Min       1Q   Median       3Q      Max 
--15.1392  -3.2508  -0.7307   2.9789  16.5544 
+-16.4597  -3.4598  -0.7431   3.3737  17.1847 
 
 Coefficients:
             Estimate Std. Error t value Pr(&gt;|t|)    
-(Intercept)  48.1885     3.3948   14.20 1.48e-12 ***
-t             5.8820     0.2376   24.76  &lt; 2e-16 ***
+(Intercept)  47.7931     3.3730   14.17 1.54e-12 ***
+t             5.7222     0.2361   24.24  &lt; 2e-16 ***
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
-Residual standard error: 8.057 on 22 degrees of freedom
-Multiple R-squared:  0.9653,    Adjusted R-squared:  0.9638 
-F-statistic: 612.9 on 1 and 22 DF,  p-value: &lt; 2.2e-16</code></pre>
+Residual standard error: 8.005 on 22 degrees of freedom
+Multiple R-squared:  0.9639,    Adjusted R-squared:  0.9623 
+F-statistic: 587.6 on 1 and 22 DF,  p-value: &lt; 2.2e-16</code></pre>
 </div>
 </div>
-<p>1998-2021 döneminde endeksin 5.9 arttığını görüyoruz. Aynı zamanda artı işaretli olması yükselen bir trendin olduğunu göstermektedir.</p>
+<p>1998-2021 döneminde endeksin 5.7 arttığını görüyoruz. Aynı zamanda artı işaretli olması yükselen bir trendin olduğunu göstermektedir.</p>
 </section>
 </section>
 <section id="lin-log" class="level2" data-number="3.3">
@@ -639,23 +644,23 @@ Call:
 lm(formula = rgdp ~ t + t2, data = df2)
 
 Residuals:
-    Min      1Q  Median      3Q     Max 
--8.1360 -4.0737  0.2895  3.5720  6.9034 
+   Min     1Q Median     3Q    Max 
+-9.538 -3.735  1.451  3.059  5.853 
 
 Coefficients:
             Estimate Std. Error t value Pr(&gt;|t|)    
-(Intercept) 64.10485    3.19497  20.064 3.52e-15 ***
-t            2.20903    0.58885   3.751  0.00118 ** 
-t2           0.14692    0.02287   6.425 2.28e-06 ***
+(Intercept) 63.52376    3.20715  19.807 4.55e-15 ***
+t            2.09207    0.59110   3.539  0.00194 ** 
+t2           0.14521    0.02295   6.326 2.84e-06 ***
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
-Residual standard error: 4.789 on 21 degrees of freedom
-Multiple R-squared:  0.9883,    Adjusted R-squared:  0.9872 
-F-statistic: 888.2 on 2 and 21 DF,  p-value: &lt; 2.2e-16</code></pre>
+Residual standard error: 4.807 on 21 degrees of freedom
+Multiple R-squared:  0.9876,    Adjusted R-squared:  0.9864 
+F-statistic: 834.9 on 2 and 21 DF,  p-value: &lt; 2.2e-16</code></pre>
 </div>
 </div>
-<p><span class="math inline">\(\frac{dRGDP}{dt} = 2.21 + 2(0.15)zaman = 2.21 + 0.3zaman\)</span></p>
+<p><span class="math inline">\(\frac{dRGDP}{dt} = 2.09 + 2(0.15)zaman = 2.09 + 0.3zaman\)</span></p>
 <p>Yukarıda, RGDP’nin değişim hızı bu değişim hızının ölçüldüğü zamana bağlıdır. Zamana göre ikinci türev alınırsa, 0.3 değeri elde edilir. Bu da değişim hızının zaman içinde sabit olan değişim hızıdır. İkinci türev pozitif ise RGDP artan bir oranda artmaktadır.</p>
 <p>Az önce tahmin edilen model yerine aşağıdaki model tahmin edilmek istensin.</p>
 <p><span class="math inline">\(lnRGDP_t = \beta_1 + \beta_2t + \beta_3t^2 + \epsilon_t\)</span></p>
@@ -670,24 +675,24 @@ lm(formula = ln_rgdp ~ t + t2, data = df2)
 
 Residuals:
       Min        1Q    Median        3Q       Max 
--0.112968 -0.032433  0.006412  0.035756  0.062860 
+-0.085964 -0.032355  0.007408  0.030899  0.082041 
 
 Coefficients:
              Estimate Std. Error t value Pr(&gt;|t|)    
-(Intercept) 4.1371545  0.0314747 131.444  &lt; 2e-16 ***
-t           0.0466783  0.0058010   8.047  7.5e-08 ***
-t2          0.0001091  0.0002253   0.484    0.633    
+(Intercept) 4.1317305  0.0317325 130.205  &lt; 2e-16 ***
+t           0.0444972  0.0058485   7.608 1.82e-07 ***
+t2          0.0001766  0.0002271   0.778    0.445    
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
-Residual standard error: 0.04717 on 21 degrees of freedom
-Multiple R-squared:  0.9836,    Adjusted R-squared:  0.9821 
-F-statistic: 630.8 on 2 and 21 DF,  p-value: &lt; 2.2e-16</code></pre>
+Residual standard error: 0.04756 on 21 degrees of freedom
+Multiple R-squared:  0.983, Adjusted R-squared:  0.9814 
+F-statistic: 608.5 on 2 and 21 DF,  p-value: &lt; 2.2e-16</code></pre>
 </div>
 </div>
 <p><span class="math inline">\(\frac{dlnRGDP}{dt} = \beta_2 + 2\beta_3t\)</span></p>
 <p><span class="math inline">\(\frac{1}{RGDP} \frac{dRGDP}{dt} = \beta_2 + 2\beta_3t\)</span></p>
-<p>RGDP’nin büyüme hızı = <span class="math inline">\(\beta_2 + 2\beta_3t = 0.047 + 0.0002t\)</span></p>
+<p>RGDP’nin büyüme hızı = <span class="math inline">\(\beta_2 + 2\beta_3t = 0.044 + 0.0002t\)</span></p>
 <p>RGDP’nin büyüme hızı birim zaman başına 0.0002 oranında artmaktadır.</p>
 
 
@@ -800,8 +805,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./kaynak.html" class="pagination-link">
-        <span class="nav-page-text">Yararlandığım Kaynaklar</span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./kukla_degisken.html" class="pagination-link">
+        <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Nitel Açıklayıcı Değişkenli Regresyon Modelleri</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

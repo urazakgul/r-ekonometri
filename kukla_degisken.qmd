@@ -1,0 +1,270 @@
+# Nitel Açıklayıcı Değişkenli Regresyon Modelleri
+
+## Ücret Modeli
+
+Saatlik ücreti (dolar bazında) belirleyen faktörleri örneklemde araştırmak üzere, Mart 1995'te görüşme yapılan 1289 kişilik (anakütleden alınan örneklem) bir yatay-kesite bakmış ve bir regresyon modeli kurmuştuk. Burada kullandığımız kukla değişkenler aşağıdaki gibi gösterilebilir.
+
+$Wage_i = \beta_1 + \beta_2D_{2i} + \beta_3D_{3i} + \beta_4D_{4i} + \beta_5Educ_i + \beta_6Exper_i + \epsilon_i$
+
+Yukarıdaki modelde D'ler kukla (dummy) değişkenlerdir.
+
+$D_{2i}:$ Kadın 1, Erkek 0
+
+$D_{3i}:$ Beyaz Değil 1, Beyaz 0
+
+$D_{4i}:$ Sendikalı 1, Sendikasız 0
+
+Kukla değişkenler söz konusu olduğu zaman aşağıdaki değerlendirmeler dikkate alınmalıdır.
+
+* Eğer modele kesme terimi dahil edilmiş ise kukla değişken sayısının 1 eksiği kadar kukla değişken belirlenir. Yani, m kategori varsa (m-1) kukla değişken belirlenir.
+
+Yukarıdaki değerlendirme dikkate alınmazsa kukla değişken tuzağı denilen duruma düşülür ki bu da tam doğrusal bağlantı durumudur. Örneğin, 3 kategori için 3 kukla değişken ve bir de kesme terimi olsun. Üç kukla değişkenin toplamı 1 olacaktır. Bu değer ise 1 olan ortak kesme terimine eşit olacaktır. Buna tam doğrusallık denir.
+
+* Eğer tüm kategoriler kukla değişken olarak dahil edilmek isteniyorsa bir önceki maddede bahsedilen kukla değişken tuzağından kurtulmak için kesme terimi modelden çıkarılmalıdır.
+
+* Bir kategori 0 değerini alıyorsa (kadın 1; erkek 0 gibi) referans, gösterge ya da karşılaştırma kategorisi ismini alır.
+
+* Kukla değişkenlerin (1 ve 0 olarak belirlendiğinde) logaritması alınmamalıdır.
+
+Kukla değişkenleri yorumlamadan önce model çıktısını hatırlayalım.
+
+```{r}
+#| warning: false
+
+library(readxl)
+library(tidyverse)
+library(ggthemes)
+library(magrittr)
+library(zoo)
+#library(segmented)
+
+df <- read_excel("./data/drm.xls")
+
+df %<>%
+select(wage, female, nonwhite, union, education, exper)
+
+model <- lm(formula = wage ~ female + nonwhite + union + education + exper, data = df)
+summary(model)
+
+```
+
+Diğer tüm değişkenler sabit tutulduğunda;
+
+* female: Bir kadın işçinin ortalama saatlik ücreti bir erkek işçinin ortalama saatlik ücretine göre $3.07 daha düşüktür. Referans kategori erkektir.
+
+* nonwhite: Beyaz olmayan bir işçinin ortalama saatlik ücreti beyaz olan bir işçinin ortalama saatlik ücretine göre $1.56 daha düşüktür. Referans kategori beyaz.
+
+* union: Sendikalı bir işçinin ortalama saatlik ücreti sendikasız bir işçinin ortalama saatlik ücretine göre $1.09 daha düşüktür. Referans kategori sendikasız.
+
+Tüm p'ler neredeyse sıfır olduğu için kukla parametrelerinin tamamı istatistiksel olarak anlamlıdır.
+
+-7.18 olan ortak kesme değeri, 0 değeri alan kategorileri temsil eder. Beyaz, sendikasız ve erkek işçi için beklenen saatlik ücrettir denilebilir.
+
+## Yapısal Değişimdeki Rolü
+
+1959 - 2007 dönemi için ABD'de brüt özel yatırımlar (GPI) ile brüt özel tasarruflar (GPS) arasındaki ilişkiye bakalım. İlgili verilere *kd1.xls* dosyasından ulaşılabilir.
+
+Yatırım fonksiyonu:
+
+$GPI_t = \beta_1 + \beta_2GPS_t + \epsilon_t, \beta_2 > 0$
+
+Herhangi bir yapısal kırılma olup olmadığı değerlendirmesine girmeden model aşağıdaki gibi kurulsun.
+
+```{r}
+
+df1 <- read_excel("./data/kd1.xls") %>%
+select(obs,gpi,gps)
+
+model_yapisal_normal <- lm(gpi ~ gps, data = df1)
+summary(model_yapisal_normal)
+
+```
+
+GPS $1 arttığında ortalama GPI $1.1 artmaktadır.
+
+Peki, yapısal kırılma var mıdır?
+
+1981'den itibaren olan gözlemler için 1 değerini alan kategori Recession81 olsun. Bu durumda 1981 öncesi de 0 değerini alacaktır.
+
+$GPI_t = \beta_1 + \beta_2GPS_t + \beta_3Recession81_t + \epsilon_t$
+
+```{r}
+
+df1 %<>%
+mutate(
+    recession81 = ifelse(
+        obs >= 1981, 1, 0
+    )
+)
+
+model_yapisal_81 <- lm(gpi ~ gps + recession81, data = df1)
+summary(model_yapisal_81)
+
+```
+
+-240.78 olan kukla parametresi istatistiksel olarak anlamlıdır. Resesyon öncesi dönem ise (-83.48 - 240.78) = -324.26'dır.
+
+```{r}
+
+df1 %>%
+select(-recession81) %>%
+pivot_longer(!obs, names_to = "vars", values_to = "vals") %>%
+ggplot(aes(x = obs, y = vals, color = vars)) +
+geom_line() +
+geom_vline(xintercept = 1981, linetype = "dashed") +
+theme_fivethirtyeight() +
+theme(legend.title = element_blank()) +
+scale_color_manual(values = c("red","blue"))
+
+```
+
+## Mevsimsel Verilerdeki Rolü
+
+Mevsime duyarlı olan moda giyim satışlarına bakalım. İlgili verilere *kd2.xls* dosyasından ulaşılabilir.
+
+Model aşağıdaki gibi olsun.
+
+$Sales_t = \beta_1 + \beta_2D_{2t} + \beta_3D_{3t} + \beta_4D_{4t} + \epsilon_t$
+
+$D_2:$ İkinci çeyrek için 1
+
+$D_3:$ Üçüncü çeyrek için 1
+
+$D_4:$ Dördüncü çeyrek için 1
+
+$Sales:$ Bin fit-karelik perakende alanı başına reel satış
+
+$\beta_1:$ Birinci çeyrek ortalama satış değeri
+
+İlk çeyrek referans çeyrektir.
+
+```{r}
+
+df2 <- read_excel("./data/kd2.xls") %>%
+select(obs,sales) %>%
+mutate(
+    obs = as.yearqtr(gsub(":","-",obs))
+)
+
+ggplot(df2, aes(x = obs, y = sales)) +
+geom_line() +
+theme_fivethirtyeight()
+
+```
+
+```{r}
+
+df2 %<>%
+mutate(
+    quarter = substr(obs,6,7),
+    "q1" = ifelse(quarter == "Q1", 1, 0),
+    "q2" = ifelse(quarter == "Q2", 1, 0),
+    "q3" = ifelse(quarter == "Q3", 1, 0),
+    "q4" = ifelse(quarter == "Q4", 1, 0)
+)
+
+model_mevsim <- lm(sales ~ q2 + q3 + q4, data = df2)
+summary(model_mevsim)
+
+```
+
+* $D_2:$ İkinci çeyrekteki ortalama satış değeri referans çeyrekteki ortalama satıştan 14.692 birim daha yüksektir. İkinci çeyrek ortalama satış değeri = 73.183 + 14.692 = 87.875'tir.
+
+* $D_3:$ Üçüncü çeyrekteki ortalama satış değeri referans çeyrekteki ortalama satıştan 27.965 birim daha yüksektir. Üçüncü çeyrek ortalama satış değeri = 73.183 + 27.965 = 101.148'tir.
+
+* $D_4:$ Dördüncü çeyrekteki ortalama satış değeri referans çeyrekteki ortalama satıştan 57.115 birim daha yüksektir. Dördüncü çeyrek ortalama satış değeri = 73.183 + 57.115 = 130.298'tir.
+
+p değerlerine göre kukla parametreleri istatistiksel olarak anlamlıdır.
+
+Mevsimsel etkiden arındırmak için aşağıdaki yol izlenebilir:
+
+i. Tahmin edilen modelden satış hacmi tahmini bulunur.
+
+ii. Gerçek satış hacminden tahmin edilen satış değeri çıkartılır ve kalıntılar elde edilir.
+
+iii. Örneklem ortalama satış değeri elde edilen kalıntılara eklenir.
+
+```{r}
+
+df2 %<>%
+mutate(
+    f_sales = model_mevsim$fitted.values,
+    resid = sales - f_sales,
+    seadj = mean(sales) + resid
+)
+
+```
+
+```{r}
+
+df2 %>%
+select(obs,sales,seadj) %>%
+pivot_longer(!obs, names_to = "vars", values_to = "vals") %>%
+ggplot(aes(x = obs, y = vals, color = vars)) +
+geom_line() +
+theme_fivethirtyeight() +
+theme(legend.title = element_blank()) +
+scale_color_manual(values = c("red","blue"))
+
+```
+
+## Parçalı Doğrusal Regresyon
+
+Hipotetik olarak bir üreticinin birim başına ortalama maliyeti (ac) ile üretim partisi büyüklüğüne (lot_size) bakalım. İlgili verilere *kd3.xlsx* dosyasından ulaşılabilir.
+
+```{r}
+
+df3 <- readxl::read_excel("./data/kd3.xlsx")
+
+ggplot(df3, aes(x = lot_size, y = ac)) +
+geom_point(size = 2) +
+theme_fivethirtyeight() +
+labs(
+    x = "Parti Büyüklüğü",
+    y = "Ortalama Maliyet"
+)
+
+```
+
+Yukarıdaki görselde parti büyüklüğü 200 öncesi ve sonrası için farklı doğruların çalıştırılabileceği düşünülebilir. Yani, 200 eşik değerdir.
+
+```{r}
+
+model_parcali <- lm(ac ~ lot_size, data = df3)
+segmented_model_parcali <- segmented::segmented(
+    model_parcali, seg.Z = ~lot_size, psi = 200
+)
+summary(segmented_model_parcali)
+
+```
+
+Kullanılan fonksiyon x = 195.766'da bir kırılma tespit etti.
+
+Eğer x $\leq$ 195.766 ise;
+
+y = 15.313 - 0.052 * lot_size
+
+Eğer x $>$ 195.766 ise;
+
+(15.313 - 0.052 * 195.766) + (-0.052 + 0.0396) * (lot_size-195.766)
+
+5.133 - 0.0124 * (lot_size-195.766)
+
+195.766 birimlik parti büyüklüğüne kadar parti büyüklüğündeki birim artış başına birim maliyet 5 kuruş azalıyor. 195.766 birimlik parti büyüklüğünden sonra ise yaklaşık 1 kuruş azalıyor.
+
+```{r}
+
+df3 %<>%
+mutate(
+    pr = segmented_model_parcali$fitted.values
+)
+ggplot(df3) +
+geom_point(aes(x = lot_size, y = ac)) +
+geom_line(aes(x = lot_size, y = pr), color = "red") +
+theme_fivethirtyeight() +
+labs(
+    x = "Parti Büyüklüğü",
+    y = "Ortalama Maliyet"
+)
+
+```
